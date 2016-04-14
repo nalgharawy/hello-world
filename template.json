@@ -1,0 +1,269 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+   "parameters": {
+        "virtualMachines_phia_prim01_adminPassword": {
+            "value": null
+        },
+        "virtualMachines_phia_prim01_name": {
+            "value": null
+        },
+        "networkInterfaces_phia_prim01859_name": {
+            "value": null
+        },
+        "networkSecurityGroups_UNI_PHIA_PRIMERO_name": {
+            "value": null
+        },
+        "publicIPAddresses_GWIP1_name": {
+            "defaultValue": "GWIP1",
+            "type": "String"
+        },
+        "PublicIPAdd_XXXX_Primero_IP1_name": {
+            "defaultValue": "XXXX-Primero_IP1",
+            "type": "String"
+        },
+        "VN_UNI_XXXX_primero": {
+            "defaultValue": "vn-uni-nepa-primero",
+            "type": "String"
+        },
+        "StorAcct_saunixxxxprimeroprem": {
+            "defaultValue": "sauninepaprimeroprem",
+            "type": "String"
+        },
+        "StorAcct_saunixxxxprimero": {
+            "defaultValue": "saunixxxxprimero",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Compute/virtualMachines/nepa-prim01'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('VM_XXXX_prim01_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "14.04.4-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[parameters('VM_XXXX_prim01_name')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('StorAcct_saunixxxxprimeroprem'), '.blob.core.windows.net', concat('/vhds/', parameters('VM_XXXX_prim01_name'),'2016230132041.vhd'))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('VM_XXXX_prim01_name')]",
+                    "adminUsername": "sysadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    },
+                    "secrets": [],
+                    "adminPassword": "[parameters('VM_XXXX_prim01_adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('Nic_XXXX_prim01859_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('StorAcct_saunixxxxprimeroprem'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('Nic_XXXX_prim01859_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Network/networkInterfaces/nepa-prim01859'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('Nic_XXXX_prim01859_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('PublicIPAdd_XXXX_Primero_IP1_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('VN_UNI_XXXX_primero')), '/subnets/main')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('NSG_UNI_XXXX_PRIMERo'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('PublicIPAdd_XXXX_Primero_IP1_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('VN_UNI_XXXX_primero'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('NSG_UNI_XXXX_PRIMERo'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Network/networkSecurityGroups/UNI-NEPA-PRIMERO'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('NSG_UNI_XXXX_PRIMERo')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Common_443",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "13.80.125.224/30",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1110,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "Common_80",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "13.80.125.224/30",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1120,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "Common_8443",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8443",
+                            "sourceAddressPrefix": "13.80.125.224/30",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1130,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "Common_22",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "13.80.125.224/30",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Network/publicIPAddresses/GWIP1'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_GWIP1_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Network/publicIPAddresses/NEPA-Primero_IP1'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('PublicIPAdd_XXXX_Primero_IP1_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "tags": {},
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/RG-UNI-NEP/providers/Microsoft.Network/virtualNetworks/vn-uni-nepa-primero'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('VN_UNI_XXXX_primero')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "main",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/26"
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "10.0.0.192/29"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/rg-uni-nep/providers/Microsoft.Storage/storageAccounts/sauninepaprimeroprem'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('StorAcct_saunixxxxprimeroprem')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "tags": {},
+            "properties": {
+                "accountType": "Premium_LRS"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/bc4314ad-46b4-473e-9489-e9e29c406d3a/resourceGroups/rg-uni-nep/providers/Microsoft.Storage/storageAccounts/saunixxxxprimero'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('StorAcct_saunixxxxprimero')]",
+            "apiVersion": "2015-06-15",
+            "location": "westeurope",
+            "tags": {},
+            "properties": {
+                "accountType": "Standard_RAGRS"
+            },
+            "dependsOn": []
+        }
+    ]
+}

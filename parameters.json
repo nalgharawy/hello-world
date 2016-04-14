@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {               
+        "VM_XXXX_prim01_adminPassword": {
+            "value": null
+        },
+        "VM_XXXX_prim01_name": {
+            "value": null
+        },
+        "Nic_XXXX_prim01859_name": {
+            "value": null
+        },
+        "NSG_UNI_XXXX_PRIMERO_name": {
+            "value": null
+        },
+        "publicIPAddresses_GWIP1_name": {
+            "value": null
+        },
+        "PublicIPAdd_XXXX_Primero_IP1_name": {
+            "value": null
+        },
+        "VN_UNI_XXXX_primero_name": {
+            "value": null
+        },
+        "StorAcct_saunixxxxprimeroprem": {
+            "value": null 
+        },
+        "StorAcct_saunixxxxprimero": {
+            "value": null
+        }
+    }
+}
